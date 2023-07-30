@@ -115,12 +115,10 @@ def validate_password(password, length=8, need_upper=True, need_lower=True, need
     return out_list
 
 
-def button_generate(upper, lower, let_upper, let_lower, let_nums, let_special):
+def button_generate(upper, lower, let_upper, let_lower, let_nums, let_special, out_space_var):
     """Gets the tkinter variables corresponding to user selected
     password requirements and inputs them to generate_password
     function to return new password"""
-
-    global out_space_var
 
     have_upper = let_upper.get()
     have_lower = let_lower.get()
@@ -132,6 +130,17 @@ def button_generate(upper, lower, let_upper, let_lower, let_nums, let_special):
     new_password = generate_password(upper = upper_lim, lower = lower_lim, let_upper = have_upper, let_lower = have_lower, let_nums = have_nums, let_special = have_special)
     print(new_password)
     out_space_var.set(new_password)
+
+
+def rnfun(special_label):
+    special_label.config(fg = "blue")
+
+
+def change_label_color(length_label, upper_label, lower_label, number_label, special_label, password_space):
+    #length_label.config(fg = "green")
+    check_string = password_space.get()
+    meets_reqs = validate_password(check_string, 8, True, True, True, True)
+
 
 
 def main():
@@ -153,10 +162,9 @@ def main():
     notebook.add(new_frame, text = "New Password")
     notebook.add(check_frame, text = "Check Password")
 
-
     # labelframe for required characters
     char_selection_frame = tk.LabelFrame(new_frame, text = "Select Required Characters")
-    char_selection_frame.grid(row = 0, column = 0)
+    char_selection_frame.pack(pady = 5)
 
     # checkbutton selection for required characters
     upper_var = tk.BooleanVar(value = False)
@@ -180,16 +188,44 @@ def main():
 
     # output entry space
     out_frame = tk.LabelFrame(new_frame, text = "New Password:", width = 200)
-    out_frame.grid(row = 1, column = 0, sticky = "ew", pady = 10)
-    
-    global out_space_var
+    out_frame.pack(fill = tk.X)
+                   
     out_space_var = tk.StringVar()
     out_space = tk.Entry(out_frame, width = 50, textvariable = out_space_var)
     out_space.pack(pady = 5)
     
     # generate password button
-    gen_butt = tk.Button(out_frame, text = "Generate", command = lambda: button_generate(length_spin, length_spin, upper_var, lower_var, num_var, special_var))
+    gen_butt = tk.Button(out_frame, text = "Generate", command = lambda: button_generate
+                         (length_spin, length_spin, upper_var, lower_var, num_var, special_var, out_space_var))
     gen_butt.pack(pady = 10)
+
+
+    # second tab for validating password
+    validate_password_frame = tk.LabelFrame(check_frame, text = "Input Password to Check")
+    validate_password_frame.pack(fill = tk.BOTH, expand = True, pady = 5)
+
+    # password entry space and validation text bullet points
+    password_space = tk.Entry(validate_password_frame, width = 50)
+    password_space.grid(row = 0, column = 0, padx =25, pady = 10)
+
+    length_label = tk.Label(validate_password_frame, text = "• At least 8 characters", fg = "red")
+    length_label.grid(row = 1, column = 0, sticky = "w", padx = 25)
+
+    upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter")
+    upper_label.grid(row = 2, column = 0, sticky = "w", padx = 25)
+
+    lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter")
+    lower_label.grid(row = 3, column = 0, sticky = "w", padx = 25)
+
+    number_label = tk.Label(validate_password_frame, text = "• Contains a number")
+    number_label.grid(row = 4, column = 0, sticky = "w", padx = 25)
+
+    special_label = tk.Label(validate_password_frame, text = "• Contains a special character")
+    special_label.grid(row = 5, column = 0, sticky = "w", padx = 25)
+
+    password_space.bind("<KeyRelease>", lambda event: change_label_color
+                              (length_label, upper_label, lower_label, number_label, special_label, password_space))
+
 
 
     root.mainloop()
