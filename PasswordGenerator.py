@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from random import choice, randint
 import string
 
@@ -139,11 +140,22 @@ def main():
     root.geometry("400x250")
     root.title("Password Generator")
 
-    frame = tk.Frame(root)
-    frame.pack()
+    # notebook for tabs
+    notebook = ttk.Notebook(root)
+    notebook.pack()
+
+    new_frame = tk.Frame(notebook)
+    new_frame.pack()
+
+    check_frame = tk.Frame(notebook)
+    check_frame.pack()
+
+    notebook.add(new_frame, text = "New Password")
+    notebook.add(check_frame, text = "Check Password")
+
 
     # labelframe for required characters
-    char_selection_frame = tk.LabelFrame(frame, text = "Select Required Characters")
+    char_selection_frame = tk.LabelFrame(new_frame, text = "Select Required Characters")
     char_selection_frame.grid(row = 0, column = 0)
 
     # checkbutton selection for required characters
@@ -167,7 +179,7 @@ def main():
     length_spin.grid(row = 2, column = 0, columnspan = 2, pady = 10)
 
     # output entry space
-    out_frame = tk.LabelFrame(frame, text = "New Password:", width = 200)
+    out_frame = tk.LabelFrame(new_frame, text = "New Password:", width = 200)
     out_frame.grid(row = 1, column = 0, sticky = "ew", pady = 10)
     
     global out_space_var
