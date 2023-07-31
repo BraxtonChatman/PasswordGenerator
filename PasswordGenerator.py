@@ -64,7 +64,7 @@ def validate_password(password, length=8, need_upper=True, need_lower=True, need
     returns list containing bool value at index 0 of whether or
     not password is valid and subsequent entries contain bools
     sepcifying which requirements weren't met
-    e.g.  [valid,  meets_length,  has_upper,  has_lower,  has_nums]
+    e.g.  [valid,  meets_length,  has_upper,  has_lower,  has_nums, has_special]
     given that the corresponding values were selected as required as inputs"""
     
     out_list = []
@@ -132,15 +132,20 @@ def button_generate(upper, lower, let_upper, let_lower, let_nums, let_special, o
     out_space_var.set(new_password)
 
 
-def rnfun(special_label):
-    special_label.config(fg = "blue")
-
-
 def change_label_color(length_label, upper_label, lower_label, number_label, special_label, password_space):
-    #length_label.config(fg = "green")
+    """Updates the colors of password requirement labels to
+    color match whether or not password meets them. Takes in
+    labels and string to be checked"""
+    
+    label_list = [length_label, upper_label, lower_label, number_label, special_label]
     check_string = password_space.get()
     meets_reqs = validate_password(check_string, 8, True, True, True, True)
 
+    for i in range(0,5):
+        if meets_reqs[i+1]:
+            label_list[i].config(fg = "green")
+        else:
+            label_list[i].config(fg = "red")
 
 
 def main():
@@ -211,16 +216,16 @@ def main():
     length_label = tk.Label(validate_password_frame, text = "• At least 8 characters", fg = "red")
     length_label.grid(row = 1, column = 0, sticky = "w", padx = 25)
 
-    upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter")
+    upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter", fg = "red")
     upper_label.grid(row = 2, column = 0, sticky = "w", padx = 25)
 
-    lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter")
+    lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter", fg = "red")
     lower_label.grid(row = 3, column = 0, sticky = "w", padx = 25)
 
-    number_label = tk.Label(validate_password_frame, text = "• Contains a number")
+    number_label = tk.Label(validate_password_frame, text = "• Contains a number", fg = "red")
     number_label.grid(row = 4, column = 0, sticky = "w", padx = 25)
 
-    special_label = tk.Label(validate_password_frame, text = "• Contains a special character")
+    special_label = tk.Label(validate_password_frame, text = "• Contains a special character", fg = "red")
     special_label.grid(row = 5, column = 0, sticky = "w", padx = 25)
 
     password_space.bind("<KeyRelease>", lambda event: change_label_color
