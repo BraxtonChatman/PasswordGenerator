@@ -4,7 +4,7 @@ from random import choice, randint
 import string
 
 
-class Validator(tk.Tk):
+class PasswordGUI(tk.Tk):
     """A class representing window with two tabs:
     the first tab generates a new password according to the selected
     requirements, and the second tab validates whether or not a
@@ -108,27 +108,51 @@ class PasswordValidator(tk.Frame):
         password_space = tk.Entry(validate_password_frame, width = 50)
         password_space.grid(row = 0, column = 0, padx =25, pady = 10)
 
-        length_label = tk.Label(validate_password_frame, text = "• At least 8 characters", fg = "red")
-        length_label.grid(row = 1, column = 0, sticky = "w", padx = 25)
+        self.length_label = tk.Label(validate_password_frame, text = "• At least 8 characters", fg = "red")
+        self.length_label.grid(row = 1, column = 0, sticky = "w", padx = 25)
 
-        upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter", fg = "red")
-        upper_label.grid(row = 2, column = 0, sticky = "w", padx = 25)
+        self.upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter", fg = "red")
+        self.upper_label.grid(row = 2, column = 0, sticky = "w", padx = 25)
 
-        lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter", fg = "red")
-        lower_label.grid(row = 3, column = 0, sticky = "w", padx = 25)
+        self.lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter", fg = "red")
+        self.lower_label.grid(row = 3, column = 0, sticky = "w", padx = 25)
 
-        number_label = tk.Label(validate_password_frame, text = "• Contains a number", fg = "red")
-        number_label.grid(row = 4, column = 0, sticky = "w", padx = 25)
+        self.number_label = tk.Label(validate_password_frame, text = "• Contains a number", fg = "red")
+        self.number_label.grid(row = 4, column = 0, sticky = "w", padx = 25)
 
-        special_label = tk.Label(validate_password_frame, text = "• Contains a special character", fg = "red")
-        special_label.grid(row = 5, column = 0, sticky = "w", padx = 25)
+        self.special_label = tk.Label(validate_password_frame, text = "• Contains a special character", fg = "red")
+        self.special_label.grid(row = 5, column = 0, sticky = "w", padx = 25)
 
-        password_space.bind("<KeyRelease>", lambda event: change_label_color
-                                (length_label, upper_label, lower_label, number_label, special_label, password_space))
+        password_space.bind("<KeyRelease>", lambda event: self.change_labels(password_space))
 
+    def change_labels(self, password_space):
+        """method to change the color of the labels on the
+        password validation tab. labels are changed to green
+        if the label requirement is met by the password,
+        otherwise label is set to red"""
+        
+        password = password_space.get()
 
+        self.length_label.config(fg = "red")
+        self.upper_label.config(fg = "red")
+        self.lower_label.config(fg = "red")
+        self.number_label.config(fg = "red")
+        self.special_label.config(fg = "red")
 
+        # check length of password
+        if len(password) > 8:
+            self.length_label.config(fg = "green")
 
+        # check for given character types in password
+        for character in password:
+            if character in string.ascii_uppercase:
+                self.upper_label.config(fg = "green")
+            if character in string.ascii_lowercase:
+                self.lower_label.config(fg = "green")
+            if character in string.digits:
+                self.number_label.config(fg = "green")
+            if character in string.punctuation:
+                self.special_label.config(fg = "green")
 
 
 #############################################################
@@ -363,5 +387,5 @@ def main():
 
 
 if __name__ == "__main__":
-    app = Validator()
+    app = PasswordGUI()
     app.mainloop()
