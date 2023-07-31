@@ -4,6 +4,136 @@ from random import choice, randint
 import string
 
 
+class Validator(tk.Tk):
+    """A class representing window with two tabs:
+    the first tab generates a new password according to the selected
+    requirements, and the second tab validates whether or not a
+    password meets given requirements"""
+
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self.geometry("400x250")
+        self.title("Password Generator")
+
+        notebook = ttk.Notebook(self)
+        notebook.pack()
+
+        for T in (PasswordGenerator, PasswordValidator):
+            tab = T(notebook)
+            notebook.add(tab, text = tab.tab_title)
+
+
+class PasswordGenerator(tk.Frame):
+    """A class representing the first tab in the notebook
+    which creates a new password according to selectable
+    requirements."""
+
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.tab_title = "New Password"
+        
+        # required characters
+        self.char_selection_frame = tk.LabelFrame(self, text = "Select Required Characters")
+        self.char_selection_frame.pack(pady = 5)
+
+        # checkbutton selection for required characters
+        self.upper_var = tk.BooleanVar(value = False)
+        self.lower_var = tk.BooleanVar(value = False)
+        self.num_var = tk.BooleanVar(value = False)
+        self.special_var = tk.BooleanVar(value = False)        
+
+        upper_check = tk.Checkbutton(
+            self.char_selection_frame,
+            text = "Include Uppercase Letters",
+            variable = self.upper_var,
+            onvalue = True, offvalue = False)
+        
+        lower_check = tk.Checkbutton(
+            self.char_selection_frame,
+            text = "Include Lowercase Letters",
+            variable = self.lower_var,
+            onvalue = True, offvalue = False)
+       
+        num_check = tk.Checkbutton(
+            self.char_selection_frame,
+            text = "Include Numbers",
+            variable = self.num_var,
+            onvalue = True, offvalue = False)
+       
+        special_check = tk.Checkbutton(
+            self.char_selection_frame,
+            text = "Include Special Characters",
+            variable = self.special_var,
+            onvalue = True, offvalue = False)
+
+        upper_check.grid(row = 0, column = 0, padx = 5)
+        lower_check.grid(row = 1, column = 0, padx = 5)
+        num_check.grid(row = 0, column = 1, sticky = "w", padx = 5)
+        special_check.grid(row = 1, column = 1, padx = 5)
+
+        # password length spinbox
+        length_spin = tk.Spinbox(
+            self.char_selection_frame,
+            from_ = 4, to = 50,
+            width = 50, state = 'readonly')
+        
+        length_spin.grid(row = 2, column = 0, columnspan = 2, pady = 10)
+
+        # output entry space
+        out_frame = tk.LabelFrame(self, text = "New Password:", width = 200)
+        out_frame.pack(fill = tk.X)
+                    
+        out_space_var = tk.StringVar()
+        out_space = tk.Entry(out_frame, width = 50, textvariable = out_space_var)
+        out_space.pack(pady = 5)
+        
+        # generate password button
+        gen_butt = tk.Button(out_frame, text="Temp")
+        # gen_butt = tk.Button(out_frame, text = "Generate", command = lambda: button_generate
+        #                     (length_spin, length_spin, upper_var, lower_var, num_var, special_var, out_space_var))
+        gen_butt.pack(pady = 10)
+
+
+class PasswordValidator(tk.Frame):
+    """A class representing the second tab in the notebook
+    which validates a  password according to preset requirements."""
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.tab_title = "Check Password"
+
+        validate_password_frame = tk.LabelFrame(self, text = "Input Password to Check")
+        validate_password_frame.pack(fill = tk.BOTH, expand = True, pady = 5)
+
+        # password entry space and validation text bullet points
+        password_space = tk.Entry(validate_password_frame, width = 50)
+        password_space.grid(row = 0, column = 0, padx =25, pady = 10)
+
+        length_label = tk.Label(validate_password_frame, text = "• At least 8 characters", fg = "red")
+        length_label.grid(row = 1, column = 0, sticky = "w", padx = 25)
+
+        upper_label = tk.Label(validate_password_frame, text = "• Contains an upper case letter", fg = "red")
+        upper_label.grid(row = 2, column = 0, sticky = "w", padx = 25)
+
+        lower_label = tk.Label(validate_password_frame, text = "• Contains a lower case letter", fg = "red")
+        lower_label.grid(row = 3, column = 0, sticky = "w", padx = 25)
+
+        number_label = tk.Label(validate_password_frame, text = "• Contains a number", fg = "red")
+        number_label.grid(row = 4, column = 0, sticky = "w", padx = 25)
+
+        special_label = tk.Label(validate_password_frame, text = "• Contains a special character", fg = "red")
+        special_label.grid(row = 5, column = 0, sticky = "w", padx = 25)
+
+        password_space.bind("<KeyRelease>", lambda event: change_label_color
+                                (length_label, upper_label, lower_label, number_label, special_label, password_space))
+
+
+
+
+
+
+#############################################################
+
+
 def generate_password(upper=8, lower=8, let_upper=True, let_lower=True, let_nums=True, let_special=True):
     """Generates a random password according to given parameters
     
@@ -232,9 +362,6 @@ def main():
                               (length_label, upper_label, lower_label, number_label, special_label, password_space))
 
 
-
-    root.mainloop()
-
-
 if __name__ == "__main__":
-    main()
+    app = Validator()
+    app.mainloop()
